@@ -5,7 +5,7 @@ import { Trend, Rate, Counter } from 'k6/metrics';
 // ── Credentials ──
 //const USERNAME = 'migration@byslglobal.com';
 //const PASSWORD = '123!@#New';
-const BASE     = https://www.liveshopping.com.bd/';
+const BASE = 'https://stagingv2api.smartoffice.ai/api/smart';
 
 // ── Custom Metrics ──
 const authTime    = new Trend('auth_response_time');
