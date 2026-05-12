@@ -21,7 +21,7 @@ export const options = {
     { duration: '30s', target: 0   },  // নামিয়ে আনো
   ],
   thresholds: {
-    'auth_user_info_time': ['p(95)<10000'],  // 95% request 10s এর মধ্যে
+    'auth_response_time': ['p(95)<10000'],  // 95% request 10s এর মধ্যে
     'auth_error_rate':     ['rate<0.01'],   // error 1% এর কম
     'http_req_failed':     ['rate<0.01'],
   },
