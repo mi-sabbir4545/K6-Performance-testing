@@ -1,0 +1,51 @@
+name: K6 Performance Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:        # GitHub থেকে manually run করার জন্য
+
+jobs:
+
+  # ─── JOB 1: Smoke Test ───────────────────────────────────────
+  smoke-test:
+    name: 🔥 Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run smoke test (auth-load)
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/auth-load-test.js
+
+  # ─── JOB 2: Auth User Info Test ──────────────────────────────
+  auth-test:
+    name: 🔐 Auth User Info Test
+    runs-on: ubuntu-latest
+    needs: smoke-test          # smoke-test pass হলে তবেই চলবে
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run auth user info test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/authUserinfotest.js
+
+  # ─── JOB 3: Employee List Test ───────────────────────────────
+  employee-test:
+    name: 👥 Employee List Test
+    runs-on: ubuntu-latest
+    needs: auth-test           # auth-test pass হলে তবেই চলবে
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run employee list test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/employee_list.js
