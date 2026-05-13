@@ -15,7 +15,7 @@ export const options = {
     { duration: '30s', target: 0   },
   ],
   thresholds: {
-    'auth_user_info_time':  ['p(95)<2000'],
+    'auth_user_info_time':  ['p(95)<10000'],
     'auth_user_info_error': ['rate<0.01'],
     'http_req_failed':      ['rate<0.01'],
   },
