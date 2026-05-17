@@ -95,8 +95,9 @@ jobs:
           name: employee-test-results
           path: reports/employee-result.json
 
-  send-email:
-    name: 📧 Send Email Report
+  # ─── NEW JOB: Generate HTML Report ───
+  generate-html-report:
+    name: 📄 Generate HTML Report
     runs-on: ubuntu-latest
     needs: [smoke-test, auth-test, employee-test]
     if: always()
@@ -104,7 +105,48 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 📧 Send Email
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Generate HTML Report
+        run: |
+          mkdir -p reports
+          node .github/scripts/generate-html-report.js artifacts/auth-test-results/auth-result.json reports/report.html
+        continue-on-error: true
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: html-report
+          path: reports/report.html
+          retention-days: 30
+
+  # ─── Modified: Send Email with HTML Attachment ───
+  send-email:
+    name: 📧 Send Email Report
+    runs-on: ubuntu-latest
+    needs: [smoke-test, auth-test, employee-test, generate-html-report]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download HTML Report
+        uses: actions/download-artifact@v4
+        with:
+          name: html-report
+          path: reports
+        continue-on-error: true
+
+      - name: 📧 Send Email with HTML Attachment
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -112,7 +154,7 @@ jobs:
           username: ${{ secrets.EMAIL_FROM }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           
-          subject: "🧪 k6 Performance Test Report"
+          subject: "🧪 k6 Performance Test Report — SmartPeople"
           to: ${{ secrets.EMAIL_TO }}
           from: "k6-Bot <${{ secrets.EMAIL_FROM }}>"
           
@@ -124,4 +166,11 @@ jobs:
             • Auth Test: ✅ Completed
             • Employee Test: ✅ Completed
             
-            🔗 Workflow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            📎 Beautiful HTML report attached!
+            
+            🔗 Full Workflow Details:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            Generated: ${{ github.event.head_commit.timestamp || 'N/A' }}
+          
+          attachments: reports/report.html
