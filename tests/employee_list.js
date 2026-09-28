@@ -3,6 +3,13 @@ import { check, sleep, group } from 'k6';
 
 const BASE = 'https://stagingv2api.smartoffice.ai/api/smart';
 
+// ── Credentials from env (K6_USERNAME / K6_PASSWORD) ──
+const USERNAME = __ENV.K6_USERNAME;
+const PASSWORD = __ENV.K6_PASSWORD;
+if (!USERNAME || !PASSWORD) {
+  throw new Error('Missing credentials: set K6_USERNAME and K6_PASSWORD (e.g. k6 run -e K6_USERNAME=... -e K6_PASSWORD=... tests/employee_list.js)');
+}
+
 export const options = {
   stages: [
     { duration: '30s', target: 2 },
@@ -21,8 +28,8 @@ export function setup() {
   const res = http.post(
     `${BASE}/auth/login`,
     JSON.stringify({
-      username: 'migration@byslglobal.com',
-      password: '123!@#New',
+      username: USERNAME,
+      password: PASSWORD,
     }),
     {
       headers: {

@@ -26,6 +26,10 @@ jobs:
           sudo apt-get install k6
 
       - name: Run smoke test
+        env:
+          K6_USERNAME: ${{ secrets.K6_USERNAME }}
+          K6_PASSWORD: ${{ secrets.K6_PASSWORD }}
+          K6_TOKEN: ${{ secrets.K6_TOKEN }}
         run: |
           mkdir -p reports
           k6 run --out json=reports/smoke-result.json tests/auth-load-test.js || true
@@ -55,6 +59,10 @@ jobs:
           sudo apt-get install k6
 
       - name: Run auth test
+        env:
+          K6_USERNAME: ${{ secrets.K6_USERNAME }}
+          K6_PASSWORD: ${{ secrets.K6_PASSWORD }}
+          K6_TOKEN: ${{ secrets.K6_TOKEN }}
         run: |
           mkdir -p reports
           k6 run --out json=reports/auth-result.json tests/authUserinfotest.js || true
@@ -83,6 +91,10 @@ jobs:
           sudo apt-get install k6
 
       - name: Run employee test
+        env:
+          K6_USERNAME: ${{ secrets.K6_USERNAME }}
+          K6_PASSWORD: ${{ secrets.K6_PASSWORD }}
+          K6_TOKEN: ${{ secrets.K6_TOKEN }}
         run: |
           mkdir -p reports
           k6 run --out json=reports/employee-result.json tests/employee_list.js || true

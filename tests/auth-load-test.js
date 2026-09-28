@@ -2,9 +2,12 @@ import http from 'k6/http';
 import { check, sleep, group } from 'k6';
 import { Trend, Rate, Counter } from 'k6/metrics';
 
-// ── Credentials ──
-//const USERNAME = 'migration@byslglobal.com';
-//const PASSWORD = '123!@#New';
+// ── Credentials from env (K6_USERNAME / K6_PASSWORD) ──
+const USERNAME = __ENV.K6_USERNAME;
+const PASSWORD = __ENV.K6_PASSWORD;
+if (!USERNAME || !PASSWORD) {
+  throw new Error('Missing credentials: set K6_USERNAME and K6_PASSWORD (e.g. k6 run -e K6_USERNAME=... -e K6_PASSWORD=... tests/auth-load-test.js)');
+}
 const BASE = 'https://stagingv2api.smartoffice.ai/api/smart';
 
 // ── Custom Metrics ──

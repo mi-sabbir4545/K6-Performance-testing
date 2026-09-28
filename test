@@ -1,8 +1,11 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-// ── Token এখানে দেওয়া আছে ──
-const TOKEN = '398250|lkEN3LehGLejE8azoSxtK9XKsg01djIadFnLAvEv0db725c2';
+// ── Token from env (K6_TOKEN) ──
+const TOKEN = __ENV.K6_TOKEN;
+if (!TOKEN) {
+  throw new Error('Missing credentials: set K6_TOKEN (e.g. k6 run -e K6_TOKEN=... test)');
+}
 
 export const options = {
   stages: [
